@@ -38,6 +38,7 @@ public enum ProcessingFlavor {
                               SOURSOP("Soursop",
                                   "The facility submitted in MSH-4 must match what is sent in the CDC SOAP WSDL request"),
                               ICE("Ice", "Forecast generated with open-cds ICE"),
+                              PHI("PHI", "Trailing \"AIRA\" is removed from patient names 10% of the time on RSPs"),
                               SNAIL("Snail",
                                   "Patients are not returned until 0, 30, 60, or 90 seconds after they have been submitted"),
                               SNAIL30("Snail30",

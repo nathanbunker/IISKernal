@@ -1,5 +1,6 @@
 package org.immregistries.iis.kernal.logic;
 
+import ca.uhn.fhir.context.FhirContext;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -13,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import ca.uhn.fhir.context.FhirContext;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -47,7 +47,6 @@ import org.immregistries.vfa.connect.model.SoftwareResult;
 import org.immregistries.vfa.connect.model.TestCase;
 import org.immregistries.vfa.connect.model.TestEvent;
 import org.immregistries.vfa.connect.model.VaccineGroup;
-
 
 public class IncomingMessageHandler {
   private static final String PATIENT_MIDDLE_NAME_MULTI = "Multi";
@@ -1894,8 +1893,19 @@ public class IncomingMessageHandler {
     // PID-4
     sb.append("|");
     // PID-5
-    sb.append("|" + patient.getPatientNameLast() + "^" + patient.getPatientNameFirst() + "^"
-        + patient.getPatientNameMiddle() + "^^^^L");
+    String firstName = patient.getPatientNameFirst();
+    String middleName = patient.getPatientNameMiddle();
+    String lastName = patient.getPatientNameLast();
+
+    // If "PHI" flavor, strip AIRA from names 10% of the time
+    if (processingFlavorSet.contains(ProcessingFlavor.PHI)) {
+      if (random.nextInt(10) == 0) {
+        firstName = firstName.replace("AIRA", "");
+        middleName = middleName.replace("AIRA", "");
+        lastName = lastName.replace("AIRA", "");
+      }
+    }
+    sb.append("|" + lastName + "^" + firstName + "^" + middleName + "^^^^L");
 
     // PID-6
     sb.append("|");
